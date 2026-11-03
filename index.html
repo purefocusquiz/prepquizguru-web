@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101827">
+
+    <title>PrepQuizGuru</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">P</div>
+                <div>
+                    <h1>PrepQuizGuru</h1>
+                    <p>Smart Exam Preparation</p>
+                </div>
+            </div>
+
+            <div class="exam-badge">TNPSC</div>
+        </header>
+
+        <main id="quiz-screen">
+
+            <section class="quiz-info">
+                <div>
+                    <p class="category-label">GENERAL ENGLISH</p>
+                    <h2>Practice Test</h2>
+                </div>
+
+                <div class="question-count" id="question-count">
+                    1 / 10
+                </div>
+            </section>
+
+            <section class="progress-section">
+                <div class="progress-details">
+                    <span>Progress</span>
+                    <span id="progress-percent">10%</span>
+                </div>
+
+                <div class="progress-track">
+                    <div id="progress-fill"></div>
+                </div>
+            </section>
+
+            <section class="question-card">
+
+                <div class="question-number" id="question-number">
+                    QUESTION 01
+                </div>
+
+                <h2 id="question-text">
+                    Loading question...
+                </h2>
+
+                <div class="options" id="options-container">
+                    <!-- Answer options will appear here -->
+                </div>
+
+                <div id="feedback-container"></div>
+
+            </section>
+
+            <section class="navigator-section">
+
+                <div class="navigator-heading">
+                    <h3>Question Navigator</h3>
+                    <span id="answered-count">0 answered</span>
+                </div>
+
+                <div class="question-grid" id="question-grid">
+                    <!-- Question numbers will appear here -->
+                </div>
+
+                <div class="navigator-legend">
+                    <span><i class="dot answered-dot"></i> Answered</span>
+                    <span><i class="dot current-dot"></i> Current</span>
+                    <span><i class="dot unanswered-dot"></i> Unanswered</span>
+                </div>
+
+            </section>
+
+            <section class="navigation-buttons">
+
+                <button id="previous-btn" class="secondary-btn">
+                    ← Previous
+                </button>
+
+                <button id="next-btn" class="primary-btn">
+                    Next →
+                </button>
+
+            </section>
+
+            <button id="finish-btn" class="finish-btn">
+                Submit Test
+            </button>
+
+        </main>
+
+        <section id="result-screen" class="hidden">
+            <div class="result-icon">🏆</div>
+
+            <h2>Test Completed!</h2>
+
+            <p class="result-subtitle">
+                Here is your performance summary.
+            </p>
+
+            <div class="result-score" id="result-score">0 / 10</div>
+
+            <div class="result-details">
+                <div>
+                    <strong id="correct-count">0</strong>
+                    <span>Correct</span>
+                </div>
+
+                <div>
+                    <strong id="wrong-count">0</strong>
+                    <span>Wrong</span>
+                </div>
+
+                <div>
+                    <strong id="unanswered-count">0</strong>
+                    <span>Unanswered</span>
+                </div>
+            </div>
+
+            <h3 id="accuracy-text">Accuracy: 0%</h3>
+
+            <button id="review-btn" class="primary-btn">
+                Review Answers
+            </button>
+
+        </section>
+
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
