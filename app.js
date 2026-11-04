@@ -3,123 +3,15 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// Sample questions matching questions.json
-const questions = [
-    {
-        question: "Choose the correct synonym of Abundant.",
-        options: {
-            A: "Scarce",
-            B: "Plentiful",
-            C: "Weak",
-            D: "Empty"
-        },
-        answer: "B",
-        explanation: "Abundant means existing in large quantities. Plentiful is its synonym."
-    },
-    {
-        question: "Choose the antonym of Ancient.",
-        options: {
-            A: "Old",
-            B: "Historic",
-            C: "Modern",
-            D: "Traditional"
-        },
-        answer: "C",
-        explanation: "Ancient means very old. Modern is its opposite."
-    },
-    {
-        question: "Identify the noun in the sentence: Honesty is the best policy.",
-        options: {
-            A: "Best",
-            B: "Honesty",
-            C: "Policy",
-            D: "Is"
-        },
-        answer: "B",
-        explanation: "Honesty is an abstract noun because it names a quality."
-    },
-    {
-        question: "What is the plural form of Child?",
-        options: {
-            A: "Childs",
-            B: "Childes",
-            C: "Children",
-            D: "Childrens"
-        },
-        answer: "C",
-        explanation: "Children is the irregular plural form of Child."
-    },
-    {
-        question: "Choose the correct article: He is ___ honest man.",
-        options: {
-            A: "A",
-            B: "An",
-            C: "The",
-            D: "No article"
-        },
-        answer: "B",
-        explanation: "An is used before the vowel sound in honest."
-    },
-    {
-        question: "What is the past tense of Write?",
-        options: {
-            A: "Written",
-            B: "Writing",
-            C: "Wrote",
-            D: "Writes"
-        },
-        answer: "C",
-        explanation: "Write is an irregular verb. Its past tense is Wrote."
-    },
-    {
-        question: "Identify the adjective: She wore a beautiful dress.",
-        options: {
-            A: "She",
-            B: "Wore",
-            C: "Beautiful",
-            D: "Dress"
-        },
-        answer: "C",
-        explanation: "Beautiful describes the noun dress, so it is an adjective."
-    },
-    {
-        question: "Choose the correct preposition: The book is ___ the table.",
-        options: {
-            A: "On",
-            B: "At",
-            C: "Into",
-            D: "By"
-        },
-        answer: "A",
-        explanation: "On indicates the position of the book on the surface of the table."
-    },
-    {
-        question: "Choose the correct passive voice: She writes a letter.",
-        options: {
-            A: "A letter wrote by her.",
-            B: "A letter is written by her.",
-            C: "A letter was written by her.",
-            D: "A letter has written by her."
-        },
-        answer: "B",
-        explanation: "Simple present active voice changes to is/am/are + past participle in passive voice."
-    },
-    {
-        question: "What is the meaning of the idiom Once in a blue moon?",
-        options: {
-            A: "Every day",
-            B: "Very quickly",
-            C: "Very rarely",
-            D: "At night"
-        },
-        answer: "C",
-        explanation: "Once in a blue moon means something that happens very rarely."
-    }
-];
+// Local development API.
+// We will change this address when the backend is hosted online.
+const API_BASE = "https://prepquizguru-api.onrender.com";
 
+let questions = [];
 let currentQuestion = 0;
 let answers = {};
 let submitted = false;
+let checkingAnswer = false;
 
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
@@ -135,21 +27,55 @@ const previousBtn = document.getElementById("previous-btn");
 const nextBtn = document.getElementById("next-btn");
 const finishBtn = document.getElementById("finish-btn");
 
+// Load questions from Python backend
+async function loadQuestions() {
+    questionText.textContent = "Loading questions...";
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/questions?exam=TNPSC&category=General%20English`
+        );
+
+        if (!response.ok) {
+            throw new Error("Could not load questions.");
+        }
+
+        const data = await response.json();
+        questions = data.questions;
+
+        if (!questions.length) {
+            throw new Error("No questions found.");
+        }
+
+        renderQuestion();
+
+    } catch (error) {
+        questionText.textContent =
+            "Unable to connect to the quiz server. Please try again.";
+        console.error(error);
+    }
+}
+
+// Display current question
 function renderQuestion() {
+    if (!questions.length) return;
+
     const q = questions[currentQuestion];
-    const selected = answers[currentQuestion];
+    const savedAnswer = answers[currentQuestion];
     const total = questions.length;
 
     questionText.textContent = q.question;
     questionCount.textContent = `${currentQuestion + 1} / ${total}`;
-    questionNumber.textContent = `QUESTION ${String(currentQuestion + 1).padStart(2, "0")}`;
+    questionNumber.textContent =
+        `QUESTION ${String(currentQuestion + 1).padStart(2, "0")}`;
 
     const progress = ((currentQuestion + 1) / total) * 100;
 
     progressFill.style.width = `${progress}%`;
     progressPercent.textContent = `${Math.round(progress)}%`;
 
-    answeredCount.textContent = `${Object.keys(answers).length} answered`;
+    answeredCount.textContent =
+        `${Object.keys(answers).length} answered`;
 
     optionsContainer.innerHTML = "";
     feedbackContainer.innerHTML = "";
@@ -167,25 +93,24 @@ function renderQuestion() {
 
         button.append(letter, label);
 
-        if (selected) {
+        if (savedAnswer) {
             button.disabled = true;
 
-            if (key === q.answer) {
-                button.classList.add("correct");
+            if (key === savedAnswer.selected) {
+                button.classList.add(
+                    savedAnswer.correct ? "correct" : "wrong"
+                );
             }
-
-            if (key === selected && selected !== q.answer) {
-                button.classList.add("wrong");
-            }
-        } else {
+        } else if (!submitted) {
+            button.disabled = checkingAnswer;
             button.addEventListener("click", () => selectAnswer(key));
         }
 
         optionsContainer.appendChild(button);
     });
 
-    if (selected) {
-        showFeedback(q, selected);
+    if (savedAnswer) {
+        showFeedback(savedAnswer);
     }
 
     previousBtn.disabled = currentQuestion === 0;
@@ -194,36 +119,72 @@ function renderQuestion() {
     renderQuestionGrid();
 }
 
-function selectAnswer(key) {
-    if (answers[currentQuestion] || submitted) return;
+// Send selected answer to Python backend
+async function selectAnswer(key) {
+    if (answers[currentQuestion] || submitted || checkingAnswer) return;
 
-    answers[currentQuestion] = key;
+    checkingAnswer = true;
     renderQuestion();
+
+    const q = questions[currentQuestion];
+
+    try {
+        const response = await fetch(`${API_BASE}/check-answer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                question_id: q.id,
+                selected_option: key
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Answer checking failed.");
+        }
+
+        const result = await response.json();
+
+        answers[currentQuestion] = {
+            selected: key,
+            correct: result.correct,
+            explanation: result.explanation
+        };
+
+    } catch (error) {
+        alert("Unable to check your answer. Please try again.");
+        console.error(error);
+
+    } finally {
+        checkingAnswer = false;
+        renderQuestion();
+    }
 }
 
-function showFeedback(q, selected) {
-    const isCorrect = selected === q.answer;
-
+// Display answer feedback returned by backend
+function showFeedback(result) {
     const box = document.createElement("div");
+
     box.className = `feedback-box ${
-        isCorrect ? "correct-feedback" : "wrong-feedback"
+        result.correct ? "correct-feedback" : "wrong-feedback"
     }`;
 
     const title = document.createElement("div");
     title.className = "feedback-title";
-    title.textContent = isCorrect ? "✓ Correct Answer!" : "✗ Incorrect Answer!";
-
-    const answer = document.createElement("div");
-    answer.textContent = `Correct answer: ${q.answer}. ${q.options[q.answer]}`;
+    title.textContent = result.correct
+        ? "✓ Correct Answer!"
+        : "✗ Incorrect Answer!";
 
     const explanation = document.createElement("div");
     explanation.className = "explanation";
-    explanation.textContent = `Explanation: ${q.explanation}`;
+    explanation.textContent = `Explanation: ${result.explanation}`;
 
-    box.append(title, answer, explanation);
+    box.append(title, explanation);
     feedbackContainer.appendChild(box);
 }
 
+// Question number navigation
 function renderQuestionGrid() {
     questionGrid.innerHTML = "";
 
@@ -242,6 +203,8 @@ function renderQuestionGrid() {
         }
 
         button.addEventListener("click", () => {
+            if (checkingAnswer) return;
+
             currentQuestion = index;
             renderQuestion();
         });
@@ -250,41 +213,52 @@ function renderQuestionGrid() {
     });
 }
 
+// Previous question
 previousBtn.addEventListener("click", () => {
-    if (currentQuestion > 0) {
+    if (currentQuestion > 0 && !checkingAnswer) {
         currentQuestion--;
         renderQuestion();
     }
 });
 
+// Next question
 nextBtn.addEventListener("click", () => {
-    if (currentQuestion < questions.length - 1) {
+    if (
+        currentQuestion < questions.length - 1 &&
+        !checkingAnswer
+    ) {
         currentQuestion++;
         renderQuestion();
     }
 });
 
+// Finish quiz
 finishBtn.addEventListener("click", () => {
-    const confirmed = confirm("Are you sure you want to submit the test?");
+    if (checkingAnswer) return;
+
+    const confirmed = confirm(
+        "Are you sure you want to submit the test?"
+    );
 
     if (confirmed) {
         showResults();
     }
 });
 
+// Results calculated using backend-verified answers
 function showResults() {
     submitted = true;
 
     const total = questions.length;
     const answered = Object.keys(answers).length;
 
-    const correct = questions.filter(
-        (q, index) => answers[index] === q.answer
+    const correct = Object.values(answers).filter(
+        answer => answer.correct
     ).length;
 
     const wrong = answered - correct;
     const unanswered = total - answered;
-    const accuracy = (correct / total) * 100;
+    const accuracy = total ? (correct / total) * 100 : 0;
 
     document.getElementById("quiz-screen").classList.add("hidden");
 
@@ -302,8 +276,10 @@ function showResults() {
         `Accuracy: ${accuracy.toFixed(1)}%`;
 }
 
+// Review answers
 document.getElementById("review-btn").addEventListener("click", () => {
     submitted = false;
+
     document.getElementById("result-screen").classList.add("hidden");
     document.getElementById("quiz-screen").classList.remove("hidden");
 
@@ -311,5 +287,5 @@ document.getElementById("review-btn").addEventListener("click", () => {
     renderQuestion();
 });
 
-// Initial display
-renderQuestion();
+// Start application
+loadQuestions();
