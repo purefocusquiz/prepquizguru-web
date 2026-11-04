@@ -17,6 +17,7 @@
 
     <div class="app-container">
 
+        <!-- HEADER -->
         <header class="header">
             <div class="brand">
                 <div class="brand-icon">P</div>
@@ -26,14 +27,176 @@
                 </div>
             </div>
 
-            <div class="exam-badge">TNPSC</div>
+            <div class="exam-badge" id="exam-badge">
+                Choose Exam
+            </div>
         </header>
 
-        <main id="quiz-screen">
+
+        <!-- HOME SCREEN -->
+        <main id="home-screen">
+
+            <section class="welcome-section">
+                <p class="category-label">YOUR EXAM PREPARATION STARTS HERE</p>
+
+                <h2>Prepare smarter.<br>Perform better.</h2>
+
+                <p class="welcome-description">
+                    Practice questions, improve your accuracy
+                    and prepare for your competitive exams.
+                </p>
+            </section>
+
+            <section class="home-features">
+                <div class="feature-item">
+                    <strong>📚</strong>
+                    <span>Topic-wise Practice</span>
+                </div>
+
+                <div class="feature-item">
+                    <strong>📝</strong>
+                    <span>Mock Tests</span>
+                </div>
+
+                <div class="feature-item">
+                    <strong>📊</strong>
+                    <span>Performance Tracking</span>
+                </div>
+            </section>
+
+            <button id="start-preparation-btn" class="primary-btn">
+                Choose Your Exam →
+            </button>
+
+        </main>
+
+
+        <!-- EXAM SELECTION SCREEN -->
+        <section id="exam-screen" class="hidden">
+
+            <div class="selection-heading">
+                <p class="category-label">STEP 01</p>
+                <h2>Choose Your Exam</h2>
+                <p>Select the competitive exam you are preparing for.</p>
+            </div>
+
+            <div class="selection-list">
+
+                <button class="selection-card" data-exam="Banking">
+                    <span class="selection-icon">🏦</span>
+                    <span class="selection-content">
+                        <strong>Banking Exams</strong>
+                        <small>IBPS · SBI · RRB</small>
+                    </span>
+                    <span class="selection-arrow">→</span>
+                </button>
+
+                <button class="selection-card" data-exam="TNPSC">
+                    <span class="selection-icon">🏛️</span>
+                    <span class="selection-content">
+                        <strong>TNPSC</strong>
+                        <small>Group 1 · Group 2/2A · Group 4</small>
+                    </span>
+                    <span class="selection-arrow">→</span>
+                </button>
+
+                <button class="selection-card" data-exam="SSC">
+                    <span class="selection-icon">📋</span>
+                    <span class="selection-content">
+                        <strong>SSC Exams</strong>
+                        <small>CGL · CHSL · MTS</small>
+                    </span>
+                    <span class="selection-arrow">→</span>
+                </button>
+
+            </div>
+
+            <button id="exam-back-btn" class="secondary-btn back-btn">
+                ← Back to Home
+            </button>
+
+        </section>
+
+
+        <!-- SUBJECT SELECTION SCREEN -->
+        <section id="subject-screen" class="hidden">
+
+            <div class="selection-heading">
+                <p class="category-label">STEP 02</p>
+                <h2>Choose Your Subject</h2>
+                <p id="subject-description">
+                    Select a subject to start practising.
+                </p>
+            </div>
+
+            <div id="subject-list" class="selection-list">
+                <!-- Subjects will be added by JavaScript -->
+            </div>
+
+            <button id="subject-back-btn" class="secondary-btn back-btn">
+                ← Back to Exams
+            </button>
+
+        </section>
+
+
+        <!-- PRACTICE MODE SCREEN -->
+        <section id="mode-screen" class="hidden">
+
+            <div class="selection-heading">
+                <p class="category-label">STEP 03</p>
+                <h2>Choose Practice Mode</h2>
+                <p id="mode-description">
+                    Select how you want to practise.
+                </p>
+            </div>
+
+            <div class="selection-list">
+
+                <button id="free-practice-btn" class="selection-card">
+                    <span class="selection-icon">📖</span>
+                    <span class="selection-content">
+                        <strong>Free Practice</strong>
+                        <small>Practise questions topic by topic</small>
+                    </span>
+                    <span class="selection-arrow">→</span>
+                </button>
+
+                <button id="mock-test-btn" class="selection-card">
+                    <span class="selection-icon">⏱️</span>
+                    <span class="selection-content">
+                        <strong>Mock Tests</strong>
+                        <small>Full-length exam practice</small>
+                        <small class="coming-soon">Coming Soon</small>
+                    </span>
+                </button>
+
+                <button id="pyq-btn" class="selection-card">
+                    <span class="selection-icon">📑</span>
+                    <span class="selection-content">
+                        <strong>Previous Year Questions</strong>
+                        <small>Practise actual previous exam questions</small>
+                        <small class="coming-soon">Coming Soon</small>
+                    </span>
+                </button>
+
+            </div>
+
+            <button id="mode-back-btn" class="secondary-btn back-btn">
+                ← Back to Subjects
+            </button>
+
+        </section>
+
+
+        <!-- EXISTING QUIZ SCREEN -->
+        <main id="quiz-screen" class="hidden">
 
             <section class="quiz-info">
                 <div>
-                    <p class="category-label">GENERAL ENGLISH</p>
+                    <p class="category-label" id="quiz-category">
+                        GENERAL ENGLISH
+                    </p>
                     <h2>Practice Test</h2>
                 </div>
 
@@ -64,7 +227,6 @@
                 </h2>
 
                 <div class="options" id="options-container">
-                    <!-- Answer options will appear here -->
                 </div>
 
                 <div id="feedback-container"></div>
@@ -79,7 +241,6 @@
                 </div>
 
                 <div class="question-grid" id="question-grid">
-                    <!-- Question numbers will appear here -->
                 </div>
 
                 <div class="navigator-legend">
@@ -108,7 +269,10 @@
 
         </main>
 
+
+        <!-- EXISTING RESULT SCREEN -->
         <section id="result-screen" class="hidden">
+
             <div class="result-icon">🏆</div>
 
             <h2>Test Completed!</h2>
