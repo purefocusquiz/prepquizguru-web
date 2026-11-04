@@ -486,6 +486,187 @@ button {
         gap: 7px;
     }
 
+/* =================================
+   HOME AND EXAM SELECTION SCREENS
+================================= */
+
+.welcome-section {
+    background: linear-gradient(135deg, #1d3152, #263c69);
+    border: 1px solid #38518a;
+    border-radius: 20px;
+    padding: 27px 22px;
+    margin-bottom: 18px;
+}
+
+.welcome-section h2 {
+    font-size: 29px;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    letter-spacing: -0.7px;
+}
+
+.welcome-description {
+    color: #c0cce0;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.home-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.feature-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 7px;
+    text-align: center;
+}
+
+.feature-item strong {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 9px;
+}
+
+.feature-item span {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+
+/* Selection headings */
+
+.selection-heading {
+    margin-bottom: 23px;
+}
+
+.selection-heading h2 {
+    font-size: 23px;
+    margin-bottom: 9px;
+}
+
+.selection-heading > p:last-child {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* Exam and subject cards */
+
+.selection-list {
+    display: grid;
+    gap: 13px;
+    margin-bottom: 22px;
+}
+
+.selection-card {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 82px;
+    padding: 15px;
+    gap: 14px;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    text-align: left;
+    transition: 0.2s ease;
+}
+
+.selection-card:hover {
+    border-color: var(--primary);
+    background: var(--card-light);
+    transform: translateY(-2px);
+}
+
+.selection-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: grid;
+    place-items: center;
+    background: #263b65;
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+.selection-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.selection-content strong {
+    font-size: 15px;
+}
+
+.selection-content small {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.selection-arrow {
+    color: #8eaaff;
+    font-size: 21px;
+}
+
+.coming-soon {
+    color: #f0c674 !important;
+    font-weight: bold;
+}
+
+
+/* Back buttons */
+
+.back-btn {
+    width: 100%;
+    margin-top: 3px;
+}
+
+
+/* Mobile adjustments */
+
+@media (max-width: 420px) {
+
+    .welcome-section {
+        padding: 23px 17px;
+    }
+
+    .welcome-section h2 {
+        font-size: 26px;
+    }
+
+    .home-features {
+        gap: 7px;
+    }
+
+    .feature-item {
+        padding: 12px 5px;
+    }
+
+    .feature-item span {
+        font-size: 9px;
+    }
+
+    .selection-card {
+        padding: 13px;
+        gap: 11px;
+    }
+
+    .selection-content strong {
+        font-size: 14px;
+    }
+}
+
     .question-number-btn {
         height: 39px;
     }
