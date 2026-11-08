@@ -115,15 +115,20 @@ resultScreen.appendChild(resultHomeBtn);
 // =====================================
 
 
+
 async function loadQuestions() {
-    // Clear previous subject data immediately
+
+    // Identify this as the latest request
+    const requestId = ++questionRequestId;
+    const requestedSubject = selectedSubject;
+
+    // Clear previous subject data
     questions = [];
     currentQuestion = 0;
     answers = {};
     submitted = false;
     checkingAnswer = false;
 
-    // Reset the quiz screen
     showScreen(quizScreen);
 
     questionText.textContent = "Loading questions...";
@@ -139,22 +144,19 @@ async function loadQuestions() {
     previousBtn.disabled = true;
     nextBtn.disabled = true;
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 90000);
+
     try {
+
         const url =
-            `${API_BASE}/questions?category=${encodeURIComponent(selectedSubject)}`;
+            `${API_BASE}/questions?category=${encodeURIComponent(requestedSubject)}`;
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 90000);
+        const response = await fetch(url, {
+            signal: controller.signal
+        });
 
-        let response;
-
-        try {
-            response = await fetch(url, {
-                signal: controller.signal
-            });
-        } finally {
-            clearTimeout(timeout);
-        }
+        if (requestId !== questionRequestId) return;
 
         if (!response.ok) {
             throw new Error(`Server returned HTTP ${response.status}`);
@@ -162,20 +164,27 @@ async function loadQuestions() {
 
         const data = await response.json();
 
+        // Ignore responses from older subject requests
+        if (requestId !== questionRequestId) return;
+
         questions = data.questions || [];
 
         if (!questions.length) {
             showScreen(homeScreen);
-            alert(`No questions are currently available for ${selectedSubject}.`);
+            alert(`No questions are currently available for ${requestedSubject}.`);
             return;
         }
 
         document.getElementById("quiz-category").textContent =
-            selectedSubject.toUpperCase();
+            requestedSubject.toUpperCase();
 
         renderQuestion();
 
     } catch (error) {
+
+        // Ignore errors from older requests
+        if (requestId !== questionRequestId) return;
+
         console.error("Question loading error:", error);
 
         questions = [];
@@ -187,10 +196,13 @@ async function loadQuestions() {
         alert(
             error.name === "AbortError"
                 ? "The server took too long to respond. Please try again."
-                : "Unable to load questions. Please check your connection and try again."
+                : "Unable to load questions. Please check your internet connection and try again."
         );
 
         showScreen(homeScreen);
+
+    } finally {
+        clearTimeout(timeout);
     }
 }
 
