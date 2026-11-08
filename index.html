@@ -15,302 +15,207 @@
 
 <body>
 
-    <div class="app-container">
+<div class="app-container">
 
-        <!-- HEADER -->
-        <header class="header">
-            <div class="brand">
-                <div class="brand-icon">P</div>
-                <div>
-                    <h1>PrepQuizGuru</h1>
-                    <p>Smart Exam Preparation</p>
-                </div>
+    <header class="header">
+        <div class="brand">
+            <div class="brand-icon">P</div>
+            <div>
+                <h1>PrepQuizGuru</h1>
+                <p>Smart Exam Preparation</p>
             </div>
+        </div>
 
-            <div class="exam-badge" id="exam-badge">
-                Choose Exam
-            </div>
-        </header>
+        <div class="exam-badge">Practice</div>
+    </header>
 
 
-        <!-- HOME SCREEN -->
-        <main id="home-screen">
+    <!-- HOME SCREEN -->
 
-            <section class="welcome-section">
-                <p class="category-label">YOUR EXAM PREPARATION STARTS HERE</p>
+    <main id="home-screen">
 
-                <h2>Prepare smarter.<br>Perform better.</h2>
+        <section class="welcome-section">
+            <p class="category-label">WELCOME TO PREPQUIZGURU</p>
 
-                <p class="welcome-description">
-                    Practice questions, improve your accuracy
-                    and prepare for your competitive exams.
-                </p>
-            </section>
+            <h2>Prepare smarter.<br>Perform better.</h2>
 
-            <section class="home-features">
-                <div class="feature-item">
-                    <strong>📚</strong>
-                    <span>Topic-wise Practice</span>
-                </div>
-
-                <div class="feature-item">
-                    <strong>📝</strong>
-                    <span>Mock Tests</span>
-                </div>
-
-                <div class="feature-item">
-                    <strong>📊</strong>
-                    <span>Performance Tracking</span>
-                </div>
-            </section>
-
-            <button id="start-preparation-btn" class="primary-btn">
-                Choose Your Exam →
-            </button>
-
-        </main>
-
-
-        <!-- EXAM SELECTION SCREEN -->
-        <section id="exam-screen" class="hidden">
-
-            <div class="selection-heading">
-                <p class="category-label">STEP 01</p>
-                <h2>Choose Your Exam</h2>
-                <p>Select the competitive exam you are preparing for.</p>
-            </div>
-
-            <div class="selection-list">
-
-                <button class="selection-card" data-exam="Banking">
-                    <span class="selection-icon">🏦</span>
-                    <span class="selection-content">
-                        <strong>Banking Exams</strong>
-                        <small>IBPS · SBI · RRB</small>
-                    </span>
-                    <span class="selection-arrow">→</span>
-                </button>
-
-                <button class="selection-card" data-exam="TNPSC">
-                    <span class="selection-icon">🏛️</span>
-                    <span class="selection-content">
-                        <strong>TNPSC</strong>
-                        <small>Group 1 · Group 2/2A · Group 4</small>
-                    </span>
-                    <span class="selection-arrow">→</span>
-                </button>
-
-                <button class="selection-card" data-exam="SSC">
-                    <span class="selection-icon">📋</span>
-                    <span class="selection-content">
-                        <strong>SSC Exams</strong>
-                        <small>CGL · CHSL · MTS</small>
-                    </span>
-                    <span class="selection-arrow">→</span>
-                </button>
-
-            </div>
-
-            <button id="exam-back-btn" class="secondary-btn back-btn">
-                ← Back to Home
-            </button>
-
-        </section>
-
-
-        <!-- SUBJECT SELECTION SCREEN -->
-        <section id="subject-screen" class="hidden">
-
-            <div class="selection-heading">
-                <p class="category-label">STEP 02</p>
-                <h2>Choose Your Subject</h2>
-                <p id="subject-description">
-                    Select a subject to start practising.
-                </p>
-            </div>
-
-            <div id="subject-list" class="selection-list">
-                <!-- Subjects will be added by JavaScript -->
-            </div>
-
-            <button id="subject-back-btn" class="secondary-btn back-btn">
-                ← Back to Exams
-            </button>
-
-        </section>
-
-
-        <!-- PRACTICE MODE SCREEN -->
-        <section id="mode-screen" class="hidden">
-
-            <div class="selection-heading">
-                <p class="category-label">STEP 03</p>
-                <h2>Choose Practice Mode</h2>
-                <p id="mode-description">
-                    Select how you want to practise.
-                </p>
-            </div>
-
-            <div class="selection-list">
-
-                <button id="free-practice-btn" class="selection-card">
-                    <span class="selection-icon">📖</span>
-                    <span class="selection-content">
-                        <strong>Free Practice</strong>
-                        <small>Practise questions topic by topic</small>
-                    </span>
-                    <span class="selection-arrow">→</span>
-                </button>
-
-                <button id="mock-test-btn" class="selection-card">
-                    <span class="selection-icon">⏱️</span>
-                    <span class="selection-content">
-                        <strong>Mock Tests</strong>
-                        <small>Full-length exam practice</small>
-                        <small class="coming-soon">Coming Soon</small>
-                    </span>
-                </button>
-
-                <button id="pyq-btn" class="selection-card">
-                    <span class="selection-icon">📑</span>
-                    <span class="selection-content">
-                        <strong>Previous Year Questions</strong>
-                        <small>Practise actual previous exam questions</small>
-                        <small class="coming-soon">Coming Soon</small>
-                    </span>
-                </button>
-
-            </div>
-
-            <button id="mode-back-btn" class="secondary-btn back-btn">
-                ← Back to Subjects
-            </button>
-
-        </section>
-
-
-        <!-- EXISTING QUIZ SCREEN -->
-        <main id="quiz-screen" class="hidden">
-
-            <section class="quiz-info">
-                <div>
-                    <p class="category-label" id="quiz-category">
-                        GENERAL ENGLISH
-                    </p>
-                    <h2>Practice Test</h2>
-                </div>
-
-                <div class="question-count" id="question-count">
-                    1 / 10
-                </div>
-            </section>
-
-            <section class="progress-section">
-                <div class="progress-details">
-                    <span>Progress</span>
-                    <span id="progress-percent">10%</span>
-                </div>
-
-                <div class="progress-track">
-                    <div id="progress-fill"></div>
-                </div>
-            </section>
-
-            <section class="question-card">
-
-                <div class="question-number" id="question-number">
-                    QUESTION 01
-                </div>
-
-                <h2 id="question-text">
-                    Loading question...
-                </h2>
-
-                <div class="options" id="options-container">
-                </div>
-
-                <div id="feedback-container"></div>
-
-            </section>
-
-            <section class="navigator-section">
-
-                <div class="navigator-heading">
-                    <h3>Question Navigator</h3>
-                    <span id="answered-count">0 answered</span>
-                </div>
-
-                <div class="question-grid" id="question-grid">
-                </div>
-
-                <div class="navigator-legend">
-                    <span><i class="dot answered-dot"></i> Answered</span>
-                    <span><i class="dot current-dot"></i> Current</span>
-                    <span><i class="dot unanswered-dot"></i> Unanswered</span>
-                </div>
-
-            </section>
-
-            <section class="navigation-buttons">
-
-                <button id="previous-btn" class="secondary-btn">
-                    ← Previous
-                </button>
-
-                <button id="next-btn" class="primary-btn">
-                    Next →
-                </button>
-
-            </section>
-
-            <button id="finish-btn" class="finish-btn">
-                Submit Test
-            </button>
-
-        </main>
-
-
-        <!-- EXISTING RESULT SCREEN -->
-        <section id="result-screen" class="hidden">
-
-            <div class="result-icon">🏆</div>
-
-            <h2>Test Completed!</h2>
-
-            <p class="result-subtitle">
-                Here is your performance summary.
+            <p class="welcome-description">
+                Strengthen your knowledge with practice questions
+                and detailed explanations.
             </p>
+        </section>
 
-            <div class="result-score" id="result-score">0 / 10</div>
+        <section class="selection-heading">
+            <p class="category-label">START PRACTISING</p>
+            <h2>Choose Your Subject</h2>
+            <p>Select a subject to begin your preparation.</p>
+        </section>
 
-            <div class="result-details">
-                <div>
-                    <strong id="correct-count">0</strong>
-                    <span>Correct</span>
-                </div>
+        <div class="selection-list">
 
-                <div>
-                    <strong id="wrong-count">0</strong>
-                    <span>Wrong</span>
-                </div>
+            <button class="selection-card" data-subject="General English">
+                <span class="selection-icon">📚</span>
+                <span class="selection-content">
+                    <strong>General English</strong>
+                    <small>Grammar, vocabulary and language</small>
+                </span>
+                <span class="selection-arrow">→</span>
+            </button>
 
-                <div>
-                    <strong id="unanswered-count">0</strong>
-                    <span>Unanswered</span>
-                </div>
+            <button class="selection-card" data-subject="Aptitude">
+                <span class="selection-icon">🔢</span>
+                <span class="selection-content">
+                    <strong>Aptitude</strong>
+                    <small>Mathematical and numerical ability</small>
+                </span>
+                <span class="selection-arrow">→</span>
+            </button>
+
+            <button class="selection-card" data-subject="Reasoning">
+                <span class="selection-icon">🧠</span>
+                <span class="selection-content">
+                    <strong>Reasoning</strong>
+                    <small>Logical and analytical ability</small>
+                </span>
+                <span class="selection-arrow">→</span>
+            </button>
+
+            <button class="selection-card" data-subject="General Studies">
+                <span class="selection-icon">🌍</span>
+                <span class="selection-content">
+                    <strong>General Studies</strong>
+                    <small>History, Polity, Geography and Science</small>
+                </span>
+                <span class="selection-arrow">→</span>
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <!-- QUIZ SCREEN -->
+
+    <main id="quiz-screen" class="hidden">
+
+        <section class="quiz-info">
+            <div>
+                <p class="category-label" id="quiz-category">
+                    GENERAL ENGLISH
+                </p>
+                <h2>Practice Test</h2>
             </div>
 
-            <h3 id="accuracy-text">Accuracy: 0%</h3>
+            <div class="question-count" id="question-count">
+                1 / 10
+            </div>
+        </section>
 
-            <button id="review-btn" class="primary-btn">
-                Review Answers
+        <section class="progress-section">
+            <div class="progress-details">
+                <span>Progress</span>
+                <span id="progress-percent">10%</span>
+            </div>
+
+            <div class="progress-track">
+                <div id="progress-fill"></div>
+            </div>
+        </section>
+
+        <section class="question-card">
+
+            <div class="question-number" id="question-number">
+                QUESTION 01
+            </div>
+
+            <h2 id="question-text">Loading question...</h2>
+
+            <div class="options" id="options-container"></div>
+
+            <div id="feedback-container"></div>
+
+        </section>
+
+        <section class="navigator-section">
+
+            <div class="navigator-heading">
+                <h3>Question Navigator</h3>
+                <span id="answered-count">0 answered</span>
+            </div>
+
+            <div class="question-grid" id="question-grid"></div>
+
+            <div class="navigator-legend">
+                <span><i class="dot answered-dot"></i> Answered</span>
+                <span><i class="dot current-dot"></i> Current</span>
+                <span><i class="dot unanswered-dot"></i> Unanswered</span>
+            </div>
+
+        </section>
+
+        <section class="navigation-buttons">
+
+            <button id="previous-btn" class="secondary-btn">
+                ← Previous
+            </button>
+
+            <button id="next-btn" class="primary-btn">
+                Next →
             </button>
 
         </section>
 
-    </div>
+        <button id="finish-btn" class="finish-btn">
+            Submit Test
+        </button>
 
-    <script src="app.js"></script>
+    </main>
+
+
+    <!-- RESULT SCREEN -->
+
+    <section id="result-screen" class="hidden">
+
+        <div class="result-icon">🏆</div>
+
+        <h2>Test Completed!</h2>
+
+        <p class="result-subtitle">
+            Here is your performance summary.
+        </p>
+
+        <div class="result-score" id="result-score">0 / 10</div>
+
+        <div class="result-details">
+
+            <div>
+                <strong id="correct-count">0</strong>
+                <span>Correct</span>
+            </div>
+
+            <div>
+                <strong id="wrong-count">0</strong>
+                <span>Wrong</span>
+            </div>
+
+            <div>
+                <strong id="unanswered-count">0</strong>
+                <span>Unanswered</span>
+            </div>
+
+        </div>
+
+        <h3 id="accuracy-text">Accuracy: 0%</h3>
+
+        <button id="review-btn" class="primary-btn">
+            Review Answers
+        </button>
+
+    </section>
+
+</div>
+
+<script src="app.js"></script>
 
 </body>
 </html>
