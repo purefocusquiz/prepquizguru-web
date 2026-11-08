@@ -486,6 +486,11 @@ button {
         gap: 7px;
     }
 
+    .question-number-btn {
+        height: 39px;
+    }
+}
+
 /* =================================
    HOME AND EXAM SELECTION SCREENS
 ================================= */
@@ -664,10 +669,5 @@ button {
 
     .selection-content strong {
         font-size: 14px;
-    }
-}
-
-    .question-number-btn {
-        height: 39px;
     }
 }
