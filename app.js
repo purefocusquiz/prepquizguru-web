@@ -19,7 +19,7 @@ let currentQuestion = 0;
 let answers = {};
 let submitted = false;
 let checkingAnswer = false;
-
+let questionRequestId = 0;
 
 // =====================================
 // HTML ELEMENTS
