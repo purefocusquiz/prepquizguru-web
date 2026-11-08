@@ -12,7 +12,6 @@ const API_BASE = "https://prepquizguru-api.onrender.com";
 // APP STATE
 // =====================================
 
-let selectedExam = "";
 let selectedSubject = "";
 
 let questions = [];
@@ -23,46 +22,12 @@ let checkingAnswer = false;
 
 
 // =====================================
-// EXAM AND SUBJECT CONFIGURATION
-// =====================================
-
-const examSubjects = {
-    Banking: [
-        "Quantitative Aptitude",
-        "Reasoning Ability",
-        "English Language",
-        "Banking Awareness"
-    ],
-
-    TNPSC: [
-        "General English",
-        "General Tamil",
-        "General Studies",
-        "Aptitude & Mental Ability"
-    ],
-
-    SSC: [
-        "General Intelligence & Reasoning",
-        "Quantitative Aptitude",
-        "English Comprehension",
-        "General Awareness"
-    ]
-};
-
-
-// =====================================
 // HTML ELEMENTS
 // =====================================
 
 const homeScreen = document.getElementById("home-screen");
-const examScreen = document.getElementById("exam-screen");
-const subjectScreen = document.getElementById("subject-screen");
-const modeScreen = document.getElementById("mode-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
-
-const examBadge = document.getElementById("exam-badge");
-const subjectList = document.getElementById("subject-list");
 
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
@@ -86,9 +51,6 @@ const finishBtn = document.getElementById("finish-btn");
 function showScreen(screen) {
     const screens = [
         homeScreen,
-        examScreen,
-        subjectScreen,
-        modeScreen,
         quizScreen,
         resultScreen
     ];
@@ -100,161 +62,52 @@ function showScreen(screen) {
 
 
 // =====================================
-// HOME SCREEN
+// SUBJECT SELECTION
 // =====================================
 
-document
-    .getElementById("start-preparation-btn")
-    .addEventListener("click", () => {
-        showScreen(examScreen);
-    });
-
-
-// =====================================
-// EXAM SELECTION
-// =====================================
-
-document.querySelectorAll(".selection-card[data-exam]")
+document.querySelectorAll(".selection-card[data-subject]")
     .forEach(button => {
 
         button.addEventListener("click", () => {
 
-            selectedExam = button.dataset.exam;
+            selectedSubject = button.dataset.subject;
 
-            examBadge.textContent = selectedExam;
-
-            document.getElementById("subject-description").textContent =
-                `Choose a subject for ${selectedExam}.`;
-
-            renderSubjects();
-
-            showScreen(subjectScreen);
-        });
-
-    });
-
-
-// =====================================
-// SUBJECT SELECTION
-// =====================================
-
-function renderSubjects() {
-
-    subjectList.innerHTML = "";
-
-    const subjects = examSubjects[selectedExam] || [];
-
-    subjects.forEach(subject => {
-
-        const button = document.createElement("button");
-
-        button.className = "selection-card";
-        button.dataset.subject = subject;
-
-        const icon = document.createElement("span");
-        icon.className = "selection-icon";
-        icon.textContent = getSubjectIcon(subject);
-
-        const content = document.createElement("span");
-        content.className = "selection-content";
-
-        const title = document.createElement("strong");
-        title.textContent = subject;
-
-        const description = document.createElement("small");
-        description.textContent =
-            selectedExam === "TNPSC" && subject === "General English"
-                ? "Free sample questions available"
-                : "Practice content coming soon";
-
-        content.append(title, description);
-
-        const arrow = document.createElement("span");
-        arrow.className = "selection-arrow";
-        arrow.textContent = "→";
-
-        button.append(icon, content, arrow);
-
-        button.addEventListener("click", () => {
-
-            selectedSubject = subject;
-
-            document.getElementById("mode-description").textContent =
-                `${selectedExam} · ${selectedSubject}`;
-
-            showScreen(modeScreen);
+            loadQuestions();
 
         });
 
-        subjectList.appendChild(button);
-
-    });
-
-}
-
-
-function getSubjectIcon(subject) {
-
-    if (subject.toLowerCase().includes("english")) return "🔤";
-    if (subject.toLowerCase().includes("tamil")) return "📖";
-    if (subject.toLowerCase().includes("reasoning")) return "🧠";
-    if (subject.toLowerCase().includes("quantitative")) return "🔢";
-    if (subject.toLowerCase().includes("awareness")) return "🌍";
-    if (subject.toLowerCase().includes("studies")) return "📚";
-    if (subject.toLowerCase().includes("aptitude")) return "📝";
-
-    return "📘";
-}
-
-
-// =====================================
-// BACK BUTTONS
-// =====================================
-
-document
-    .getElementById("exam-back-btn")
-    .addEventListener("click", () => {
-        showScreen(homeScreen);
-    });
-
-
-document
-    .getElementById("subject-back-btn")
-    .addEventListener("click", () => {
-        showScreen(examScreen);
-    });
-
-
-document
-    .getElementById("mode-back-btn")
-    .addEventListener("click", () => {
-        showScreen(subjectScreen);
     });
 
 
 // =====================================
-// PRACTICE MODE
+// BACK TO SUBJECTS BUTTONS
 // =====================================
 
-document
-    .getElementById("free-practice-btn")
-    .addEventListener("click", () => {
-        loadQuestions();
-    });
+const quizHomeBtn = document.createElement("button");
+
+quizHomeBtn.className = "secondary-btn";
+quizHomeBtn.textContent = "← Back to Subjects";
+
+quizHomeBtn.addEventListener("click", () => {
+    showScreen(homeScreen);
+});
+
+quizScreen.insertBefore(
+    quizHomeBtn,
+    quizScreen.firstChild
+);
 
 
-document
-    .getElementById("mock-test-btn")
-    .addEventListener("click", () => {
-        alert("Mock Tests are coming soon!");
-    });
+const resultHomeBtn = document.createElement("button");
 
+resultHomeBtn.className = "secondary-btn";
+resultHomeBtn.textContent = "← Back to Subjects";
 
-document
-    .getElementById("pyq-btn")
-    .addEventListener("click", () => {
-        alert("Previous Year Questions are coming soon!");
-    });
+resultHomeBtn.addEventListener("click", () => {
+    showScreen(homeScreen);
+});
+
+resultScreen.appendChild(resultHomeBtn);
 
 
 // =====================================
@@ -272,8 +125,7 @@ async function loadQuestions() {
     try {
 
         const url =
-            `${API_BASE}/questions?exam=${encodeURIComponent(selectedExam)}` +
-            `&category=${encodeURIComponent(selectedSubject)}`;
+            `${API_BASE}/questions?category=${encodeURIComponent(selectedSubject)}`;
 
         const response = await fetch(url);
 
@@ -287,12 +139,12 @@ async function loadQuestions() {
 
         if (!questions.length) {
 
+            showScreen(homeScreen);
+
             alert(
-                `Questions for ${selectedExam} - ${selectedSubject} ` +
-                "are not available yet."
+                `The ${selectedSubject} question bank is being prepared. Please try again later.`
             );
 
-            showScreen(modeScreen);
             return;
         }
 
@@ -310,12 +162,12 @@ async function loadQuestions() {
 
         console.error(error);
 
-        questionText.textContent =
-            "Unable to connect to the quiz server. Please try again.";
+        showScreen(homeScreen);
 
-        alert("Unable to load questions. Please check your connection.");
+        alert(
+            "Unable to load questions. Please check your internet connection and try again."
+        );
 
-        showScreen(modeScreen);
     }
 
 }
