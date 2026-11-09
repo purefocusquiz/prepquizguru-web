@@ -1,6 +1,4 @@
 
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,15 +9,17 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <script>
-    	const tg = window.Telegram.WebApp;
+        (function () {
+            const telegramApp = window.Telegram.WebApp;
 
-    	tg.ready();
+            telegramApp.ready();
 
-    	if (typeof tg.requestFullscreen === "function") {
-            tg.requestFullscreen();
-    	} else {
-            tg.expand();
-    	}
+            if (typeof telegramApp.requestFullscreen === "function") {
+                telegramApp.requestFullscreen();
+            } else {
+                telegramApp.expand();
+            }
+        })();
     </script>
 
     <link rel="stylesheet" href="style.css">
