@@ -563,4 +563,3 @@ document
 // =====================================
 
 showScreen(homeScreen);
-alert("Telegram Mini App viewport width: " + window.innerWidth + "px");
