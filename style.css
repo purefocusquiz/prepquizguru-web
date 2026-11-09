@@ -671,3 +671,79 @@ button {
         font-size: 14px;
     }
 }
+
+/* =================================
+   DESKTOP LAYOUT
+================================= */
+
+@media (min-width: 768px) {
+
+    body {
+        padding: 28px 36px;
+    }
+
+    .app-container {
+        max-width: 1050px;
+    }
+
+    .welcome-section {
+        padding: 38px 35px;
+    }
+
+    .welcome-section h2 {
+        font-size: 36px;
+    }
+
+    .welcome-description {
+        font-size: 15px;
+        max-width: 700px;
+    }
+
+    .selection-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .selection-card {
+        min-height: 100px;
+        padding: 20px;
+    }
+
+    .selection-content strong {
+        font-size: 17px;
+    }
+
+    .selection-content small {
+        font-size: 13px;
+    }
+
+    .question-grid {
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .question-number-btn {
+        height: 46px;
+    }
+
+    .question-card {
+        padding: 30px;
+    }
+
+    #question-text {
+        font-size: 21px;
+    }
+
+    .option-btn {
+        min-height: 65px;
+        padding: 15px;
+        font-size: 15px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .finish-btn {
+        min-height: 54px;
+        font-size: 14px;
+    }
+}
