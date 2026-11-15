@@ -747,3 +747,40 @@ button {
         font-size: 14px;
     }
 }
+
+/* About section */
+
+.about-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-top: 30px;
+}
+
+.about-section h2 {
+    font-size: 21px;
+    margin-bottom: 15px;
+}
+
+.about-section p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 13px;
+}
+
+.about-section ul {
+    padding-left: 22px;
+    margin: 10px 0 15px;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 2;
+}
+
+.about-section .about-disclaimer {
+    border-top: 1px solid var(--border);
+    padding-top: 13px;
+    margin-bottom: 0;
+    font-size: 11px;
+}
