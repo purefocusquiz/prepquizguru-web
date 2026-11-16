@@ -784,3 +784,37 @@ button {
     margin-bottom: 0;
     font-size: 11px;
 }
+
+/* Contact section */
+
+.contact-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-top: 18px;
+}
+
+.contact-section h2 {
+    font-size: 21px;
+    margin-bottom: 12px;
+}
+
+.contact-section p:not(.category-label) {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.contact-email {
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.contact-email:hover {
+    text-decoration: underline;
+}
