@@ -1,4 +1,3 @@
-
 const tg = window.Telegram?.WebApp;
 
 if (tg) {
@@ -7,6 +6,35 @@ if (tg) {
 }
 
 const API_BASE = "https://prepquizguru-api.onrender.com";
+
+// =====================================
+// ANALYTICS
+// =====================================
+
+const telegramInitData = tg?.initData || "";
+
+function trackAnalytics(eventData) {
+    if (!telegramInitData) return;
+
+    fetch(`${API_BASE}/analytics/event`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            init_data: telegramInitData,
+            ...eventData
+        }),
+        keepalive: true
+    }).catch(error => {
+        console.warn("Analytics tracking failed:", error);
+    });
+}
+
+// Record Mini App launch
+trackAnalytics({
+    event_type: "app_open"
+});
 
 // =====================================
 // APP STATE
@@ -20,7 +48,6 @@ let answers = {};
 let submitted = false;
 let checkingAnswer = false;
 let questionRequestId = 0;
-
 // =====================================
 // HTML ELEMENTS
 // =====================================
@@ -174,6 +201,12 @@ async function loadQuestions() {
             alert(`No questions are currently available for ${requestedSubject}.`);
             return;
         }
+
+        // Record successful subject attempt
+        trackAnalytics({
+            event_type: "subject_attempt",
+            subject: requestedSubject
+        });
 
         document.getElementById("quiz-category").textContent =
             requestedSubject.toUpperCase();
@@ -518,6 +551,17 @@ function showResults() {
     const accuracy = total
         ? (correct / total) * 100
         : 0;
+
+    // Record completed quiz results
+    trackAnalytics({
+        event_type: "quiz_completed",
+        subject: selectedSubject,
+        total_questions: total,
+        answered: answered,
+        correct: correct,
+        wrong: wrong,
+        unanswered: unanswered
+    });
 
     showScreen(resultScreen);
 
