@@ -818,3 +818,24 @@ button {
 .contact-email:hover {
     text-decoration: underline;
 }
+/* Privacy Policy Link */
+
+.privacy-link-section {
+    text-align: center;
+    margin-top: 18px;
+    padding: 16px;
+}
+
+.privacy-link-section a {
+    color: var(--muted);
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.privacy-link-section a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+
