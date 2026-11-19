@@ -7,6 +7,7 @@ if (tg) {
 
 const API_BASE = "https://prepquizguru-api.onrender.com";
 
+
 // =====================================
 // ANALYTICS
 // =====================================
@@ -16,6 +17,8 @@ const telegramInitData = tg?.initData || "";
 function trackAnalytics(eventData) {
     if (!telegramInitData) return;
 
+    const eventId = crypto.randomUUID();
+
     fetch(`${API_BASE}/analytics/event`, {
         method: "POST",
         headers: {
@@ -23,6 +26,7 @@ function trackAnalytics(eventData) {
         },
         body: JSON.stringify({
             init_data: telegramInitData,
+            event_id: eventId,
             ...eventData
         }),
         keepalive: true
@@ -30,6 +34,12 @@ function trackAnalytics(eventData) {
         console.warn("Analytics tracking failed:", error);
     });
 }
+
+// Record Mini App launch
+trackAnalytics({
+    event_type: "app_open"
+});
+
 
 // Record Mini App launch
 trackAnalytics({
