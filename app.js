@@ -41,10 +41,6 @@ trackAnalytics({
 });
 
 
-// Record Mini App launch
-trackAnalytics({
-    event_type: "app_open"
-});
 
 // =====================================
 // APP STATE
@@ -185,11 +181,18 @@ async function loadQuestions() {
     const timeout = setTimeout(() => controller.abort(), 90000);
 
     try {
+        const response = await fetch(`${API_BASE}/questions`, {
+            method: "POST",
 
-        const url =
-            `${API_BASE}/questions?category=${encodeURIComponent(requestedSubject)}`;
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-        const response = await fetch(url, {
+            body: JSON.stringify({
+                category: requestedSubject,
+                init_data: telegramInitData
+            }),
+
             signal: controller.signal
         });
 
