@@ -380,7 +380,8 @@ async function selectAnswer(key) {
 
             body: JSON.stringify({
                 question_id: q.id,
-                selected_option: key
+                selected_option: key,
+                init_data: telegramInitData
             })
 
         });
