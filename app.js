@@ -122,7 +122,17 @@ quizHomeBtn.className = "secondary-btn";
 quizHomeBtn.textContent = "← Back to Subjects";
 
 quizHomeBtn.addEventListener("click", () => {
+
+    if (checkingAnswer) {
+        alert("Please wait until your answer is checked.");
+        return;
+    }
+
+    // Ignore any question-loading request still in progress
+    questionRequestId++;
+
     showScreen(homeScreen);
+
 });
 
 quizScreen.insertBefore(
@@ -161,6 +171,7 @@ async function loadQuestions() {
     answers = {};
     submitted = false;
     checkingAnswer = false;
+    finishBtn.disabled = true;
 
     showScreen(quizScreen);
 
@@ -214,7 +225,8 @@ async function loadQuestions() {
             alert(`No questions are currently available for ${requestedSubject}.`);
             return;
         }
-
+        
+        finishBtn.disabled = false;
         // Record successful subject attempt
         trackAnalytics({
             event_type: "subject_attempt",
@@ -529,7 +541,7 @@ nextBtn.addEventListener("click", () => {
 
 finishBtn.addEventListener("click", () => {
 
-    if (checkingAnswer) return;
+    if (checkingAnswer || !questions.length || submitted) return;
 
     const confirmed = confirm(
         "Are you sure you want to submit the test?"
@@ -547,6 +559,8 @@ finishBtn.addEventListener("click", () => {
 // =====================================
 
 function showResults() {
+
+    if (submitted) return;
 
     submitted = true;
 
@@ -604,8 +618,6 @@ function showResults() {
 document
     .getElementById("review-btn")
     .addEventListener("click", () => {
-
-        submitted = false;
 
         currentQuestion = 0;
 
