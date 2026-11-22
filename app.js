@@ -141,7 +141,15 @@ quizScreen.insertBefore(
     quizHomeBtn,
     quizScreen.firstChild
 );
+// Back to Subjects button for completed quiz review
+const reviewHomeBtn = document.createElement("button");
 
+reviewHomeBtn.className = "secondary-btn";
+reviewHomeBtn.textContent = "← Back to Subjects";
+
+reviewHomeBtn.addEventListener("click", () => {
+    showScreen(homeScreen);
+});
 
 const resultHomeBtn = document.createElement("button");
 
