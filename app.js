@@ -349,11 +349,12 @@ function renderQuestion() {
 
             button.disabled = true;
 
-            if (key === savedAnswer.selected) {
+            if (key === savedAnswer.correctOption) {
 
-                button.classList.add(
-                    savedAnswer.correct ? "correct" : "wrong"
-                );
+                button.classList.add("correct");
+			} else if (key === savedAnswer.selected) {
+				button.classList.add("wrong");
+                
 
             }
 
@@ -438,6 +439,7 @@ async function selectAnswer(key) {
         answers[currentQuestion] = {
             selected: key,
             correct: result.correct,
+			correctOption: result.correct_option,
             explanation: result.explanation
         };
 
