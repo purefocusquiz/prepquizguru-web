@@ -146,6 +146,7 @@ const reviewHomeBtn = document.createElement("button");
 
 reviewHomeBtn.className = "secondary-btn";
 reviewHomeBtn.textContent = "← Back to Subjects";
+reviewHomeBtn.style.width = "100%";
 
 reviewHomeBtn.addEventListener("click", () => {
     showScreen(homeScreen);
@@ -743,7 +744,7 @@ document
         // Place Back to Subjects where Submit normally appears.
         quizScreen.insertBefore(
             reviewHomeBtn,
-            finishBtn.nextSibling
+            finishBtn
         );
 
         showScreen(quizScreen);
