@@ -47,11 +47,13 @@ trackAnalytics({
 // =====================================
 
 let selectedSubject = "";
+let sessionId = "";
 
 let questions = [];
 let currentQuestion = 0;
 let answers = {};
 let submitted = false;
+let completing = false;
 let checkingAnswer = false;
 let questionRequestId = 0;
 // =====================================
@@ -123,8 +125,8 @@ quizHomeBtn.textContent = "← Back to Subjects";
 
 quizHomeBtn.addEventListener("click", () => {
 
-    if (checkingAnswer) {
-        alert("Please wait until your answer is checked.");
+    if (checkingAnswer || completing) {
+        alert("Please wait until the current operation finishes.");
         return;
     }
 
@@ -147,6 +149,11 @@ resultHomeBtn.className = "secondary-btn";
 resultHomeBtn.textContent = "← Back to Subjects";
 
 resultHomeBtn.addEventListener("click", () => {
+
+    if (completing) {
+        return;
+    }
+
     showScreen(homeScreen);
 });
 
@@ -167,9 +174,12 @@ async function loadQuestions() {
 
     // Clear previous subject data
     questions = [];
+    sessionId = "";
+    
     currentQuestion = 0;
     answers = {};
     submitted = false;
+    completing = false;
     checkingAnswer = false;
     finishBtn.disabled = true;
 
@@ -217,21 +227,40 @@ async function loadQuestions() {
 
         // Ignore responses from older subject requests
         if (requestId !== questionRequestId) return;
+	questions = data.questions || [];
+	sessionId = data.session_id || "";
 
-        questions = data.questions || [];
+	if (!questions.length || !sessionId) {
+    	    questions = [];
+    	    sessionId = "";
 
-        if (!questions.length) {
-            showScreen(homeScreen);
-            alert(`No questions are currently available for ${requestedSubject}.`);
-            return;
-        }
-        
-        finishBtn.disabled = false;
-        // Record successful subject attempt
-        trackAnalytics({
-            event_type: "subject_attempt",
-            subject: requestedSubject
-        });
+    	    showScreen(homeScreen);
+    	    alert(`No valid quiz session is available for ${requestedSubject}.`);
+    	    return;
+	}
+
+	// Notify backend that the quiz has started.
+	const startResponse = await fetch(`${API_BASE}/quiz-started`, {
+    	    method: "POST",
+    	    headers: {
+        	"Content-Type": "application/json"
+    	    },
+    	    body: JSON.stringify({
+        	session_id: sessionId,
+        	init_data: telegramInitData
+    	    })
+	});
+
+	if (!startResponse.ok) {
+    	    throw new Error("Unable to start quiz session.");
+	}
+
+	// Ignore this response if the user has moved to another screen
+	// or selected another subject while the request was processing.
+	if (requestId !== questionRequestId) return;
+
+	finishBtn.disabled = false;
+
 
         document.getElementById("quiz-category").textContent =
             requestedSubject.toUpperCase();
@@ -246,6 +275,7 @@ async function loadQuestions() {
         console.error("Question loading error:", error);
 
         questions = [];
+        sessionId = "";
         questionGrid.innerHTML = "";
         optionsContainer.innerHTML = "";
 
@@ -391,6 +421,7 @@ async function selectAnswer(key) {
             },
 
             body: JSON.stringify({
+                session_id: sessionId,
                 question_id: q.id,
                 selected_option: key,
                 init_data: telegramInitData
@@ -558,59 +589,77 @@ finishBtn.addEventListener("click", () => {
 // RESULTS
 // =====================================
 
-function showResults() {
+async function showResults() {
 
-    if (submitted) return;
+    if (submitted || checkingAnswer || !questions.length || !sessionId) {
+        return;
+    }
 
     submitted = true;
+    completing = true;
+    finishBtn.disabled = true;
 
-    const total = questions.length;
+    try {
 
-    const answered = Object.keys(answers).length;
+        const response = await fetch(`${API_BASE}/complete-quiz`, {
+            method: "POST",
 
-    const correct = Object.values(answers).filter(
-        answer => answer.correct
-    ).length;
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-    const wrong = answered - correct;
+            body: JSON.stringify({
+                session_id: sessionId,
+                init_data: telegramInitData
+            })
+        });
 
-    const unanswered = total - answered;
+        if (!response.ok) {
+            throw new Error(`Quiz completion failed: HTTP ${response.status}`);
+        }
 
-    const accuracy = total
-        ? (correct / total) * 100
-        : 0;
+        const result = await response.json();
+        completing = false;
 
-    // Record completed quiz results
-    trackAnalytics({
-        event_type: "quiz_completed",
-        subject: selectedSubject,
-        total_questions: total,
-        answered: answered,
-        correct: correct,
-        wrong: wrong,
-        unanswered: unanswered
-    });
+        const total = result.total_questions;
+        const answered = result.answered;
+        const correct = result.correct;
+        const wrong = result.wrong;
+        const unanswered = result.unanswered;
+        const accuracy = result.accuracy;
 
-    showScreen(resultScreen);
+        showScreen(resultScreen);
 
-    document.getElementById("result-score").textContent =
-        `${correct} / ${total}`;
+        document.getElementById("result-score").textContent =
+            `${correct} / ${total}`;
 
-    document.getElementById("correct-count").textContent =
-        correct;
+        document.getElementById("correct-count").textContent =
+            correct;
 
-    document.getElementById("wrong-count").textContent =
-        wrong;
+        document.getElementById("wrong-count").textContent =
+            wrong;
 
-    document.getElementById("unanswered-count").textContent =
-        unanswered;
+        document.getElementById("unanswered-count").textContent =
+            unanswered;
 
-    document.getElementById("accuracy-text").textContent =
-        `Accuracy: ${accuracy.toFixed(1)}%`;
+        document.getElementById("accuracy-text").textContent =
+            `Accuracy: ${Number(accuracy).toFixed(1)}%`;
 
+    } catch (error) {
+
+        console.error("Quiz completion error:", error);
+
+        // Allow the user to retry completion.
+        submitted = false;
+        completing = false;
+        finishBtn.disabled = false;
+
+        alert(
+            "Unable to submit your quiz results. Please check your connection and try again."
+        );
+
+    }
 }
-
-
 // =====================================
 // REVIEW ANSWERS
 // =====================================
