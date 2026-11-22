@@ -734,16 +734,16 @@ document
 
         currentQuestion = 0;
 
-        // Hide the active quiz's Submit button.
+        // Hide Submit during review.
         finishBtn.style.display = "none";
 
-        // Hide the active quiz's Back to Subjects button.
+        // Hide the top Back to Subjects button.
         quizHomeBtn.style.display = "none";
 
-        // Add the review-specific Back to Subjects button.
+        // Place Back to Subjects where Submit normally appears.
         quizScreen.insertBefore(
             reviewHomeBtn,
-            quizScreen.firstChild
+            finishBtn.nextSibling
         );
 
         showScreen(quizScreen);
