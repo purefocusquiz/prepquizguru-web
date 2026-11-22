@@ -190,6 +190,10 @@ async function loadQuestions() {
     completing = false;
     checkingAnswer = false;
     finishBtn.disabled = true;
+	// Restore normal quiz buttons for the new quiz.
+    finishBtn.style.display = "";
+    quizHomeBtn.style.display = "";
+    reviewHomeBtn.remove();
 
     showScreen(quizScreen);
 
@@ -730,12 +734,23 @@ document
 
         currentQuestion = 0;
 
+        // Hide the active quiz's Submit button.
+        finishBtn.style.display = "none";
+
+        // Hide the active quiz's Back to Subjects button.
+        quizHomeBtn.style.display = "none";
+
+        // Add the review-specific Back to Subjects button.
+        quizScreen.insertBefore(
+            reviewHomeBtn,
+            quizScreen.firstChild
+        );
+
         showScreen(quizScreen);
 
         renderQuestion();
 
     });
-
 
 // =====================================
 // START APPLICATION
