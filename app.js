@@ -324,8 +324,12 @@ function renderQuestion() {
     progressPercent.textContent =
         `${Math.round(progress)}%`;
 
-    answeredCount.textContent =
-        `${Object.keys(answers).length} answered`;
+	const actualAnswered = Object.values(answers).filter(
+	    answer => !answer.unanswered
+	).length;
+	
+	answeredCount.textContent =
+	    `${actualAnswered} answered`;
 
     optionsContainer.innerHTML = "";
     feedbackContainer.innerHTML = "";
@@ -377,7 +381,7 @@ function renderQuestion() {
     });
 
     if (savedAnswer) {
-        showFeedback(savedAnswer);
+        showFeedback(savedAnswer, q.options);
     }
 
     previousBtn.disabled =
@@ -464,21 +468,43 @@ async function selectAnswer(key) {
 // ANSWER FEEDBACK
 // =====================================
 
-function showFeedback(result) {
+function showFeedback(result, options) {
 
     const box = document.createElement("div");
 
-    box.className = `feedback-box ${
-        result.correct ? "correct-feedback" : "wrong-feedback"
-    }`;
+    box.className = result.unanswered
+        ? "feedback-box"
+        : `feedback-box ${
+            result.correct ? "correct-feedback" : "wrong-feedback"
+        }`;
 
     const title = document.createElement("div");
 
     title.className = "feedback-title";
 
-    title.textContent = result.correct
-        ? "✓ Correct Answer!"
-        : "✗ Incorrect Answer!";
+    if (result.unanswered) {
+        title.textContent = "○ Not Answered";
+    } else {
+        title.textContent = result.correct
+            ? "✓ Correct Answer!"
+            : "✗ Incorrect Answer!";
+    }
+
+    box.appendChild(title);
+
+    // Show the correct answer for unanswered questions.
+    if (result.unanswered) {
+
+        const correctAnswer = document.createElement("div");
+
+        correctAnswer.className = "explanation";
+
+        correctAnswer.textContent =
+            `Correct Answer: ${result.correctOption}. ${options[result.correctOption]}`;
+
+        box.appendChild(correctAnswer);
+
+    }
 
     const explanation = document.createElement("div");
 
@@ -487,7 +513,7 @@ function showFeedback(result) {
     explanation.textContent =
         `Explanation: ${result.explanation}`;
 
-    box.append(title, explanation);
+    box.appendChild(explanation);
 
     feedbackContainer.appendChild(box);
 
@@ -510,9 +536,9 @@ function renderQuestionGrid() {
 
         button.textContent = index + 1;
 
-        if (answers[index]) {
-            button.classList.add("answered");
-        }
+		if (answers[index] && !answers[index].unanswered) {
+		    button.classList.add("answered");
+		}
 
         if (index === currentQuestion) {
             button.classList.add("current");
@@ -620,8 +646,32 @@ async function showResults() {
             throw new Error(`Quiz completion failed: HTTP ${response.status}`);
         }
 
-        const result = await response.json();
-        completing = false;
+		const result = await response.json();
+		
+		// Prepare review data for all questions.
+		if (Array.isArray(result.review)) {
+		
+		    result.review.forEach(item => {
+		
+		        const index = questions.findIndex(
+		            q => q.id === item.question_id
+		        );
+		
+		        if (index === -1) return;
+		
+		        answers[index] = {
+		            selected: item.selected_option,
+		            correct: item.status === "correct",
+		            correctOption: item.correct_option,
+		            explanation: item.explanation,
+		            unanswered: item.status === "unanswered"
+		        };
+		
+		    });
+		
+		}
+		
+		completing = false;
 
         const total = result.total_questions;
         const answered = result.answered;
