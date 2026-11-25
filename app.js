@@ -63,6 +63,14 @@ let questionRequestId = 0;
 const homeScreen = document.getElementById("home-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
+const feedbackScreen = document.getElementById("feedback-screen");
+
+// Feedback elements
+const openFeedbackBtn = document.getElementById("open-feedback-btn");
+const feedbackMessage = document.getElementById("feedback-message");
+const feedbackStatus = document.getElementById("feedback-status");
+const submitFeedbackBtn = document.getElementById("submit-feedback-btn");
+const feedbackBackBtn = document.getElementById("feedback-back-btn");
 
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
@@ -87,13 +95,122 @@ function showScreen(screen) {
     const screens = [
         homeScreen,
         quizScreen,
-        resultScreen
+        resultScreen,
+        feedbackScreen
     ];
 
     screens.forEach(item => item.classList.add("hidden"));
 
     screen.classList.remove("hidden");
 }
+
+// =================================
+// FEEDBACK SYSTEM
+// =================================
+
+let feedbackSubmitting = false;
+
+// Open feedback screen
+openFeedbackBtn.addEventListener("click", () => {
+    feedbackStatus.textContent = "";
+    feedbackStatus.className = "";
+
+    showScreen(feedbackScreen);
+});
+
+// Return to subjects
+feedbackBackBtn.addEventListener("click", () => {
+    if (feedbackSubmitting) return;
+
+    showScreen(homeScreen);
+});
+
+// Submit feedback
+submitFeedbackBtn.addEventListener("click", async () => {
+
+    if (feedbackSubmitting) return;
+
+    const message = feedbackMessage.value.trim();
+
+    if (!message) {
+        feedbackStatus.textContent = "Please enter your feedback before submitting.";
+        feedbackStatus.className = "error";
+        return;
+    }
+
+    if (message.length > 2000) {
+        feedbackStatus.textContent = "Feedback cannot exceed 2000 characters.";
+        feedbackStatus.className = "error";
+        return;
+    }
+
+    if (!telegramInitData) {
+        feedbackStatus.textContent =
+            "Telegram session not found. Please reopen PrepQuizGuru from Telegram.";
+        feedbackStatus.className = "error";
+        return;
+    }
+
+    feedbackSubmitting = true;
+    submitFeedbackBtn.disabled = true;
+    feedbackBackBtn.disabled = true;
+    submitFeedbackBtn.textContent = "Submitting...";
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    try {
+        const response = await fetch(`${API_BASE}/feedback`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                init_data: telegramInitData,
+                message: message
+            }),
+            signal: controller.signal
+        });
+
+        await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                throw new Error(
+                    "Your Telegram session could not be verified. Close and reopen PrepQuizGuru from Telegram."
+                );
+            }
+
+            throw new Error(
+                "We couldn't submit your feedback. Please try again."
+            );
+        }
+
+        feedbackMessage.value = "";
+
+        feedbackStatus.textContent =
+            "Thank you! Your feedback has been submitted privately.";
+
+        feedbackStatus.className = "success";
+
+    } catch (error) {
+
+        feedbackStatus.textContent = error.name === "AbortError"
+            ? "The request timed out. Please try again."
+            : error.message || "Something went wrong. Please try again.";
+
+        feedbackStatus.className = "error";
+
+    } finally {
+
+        clearTimeout(timeoutId);
+
+        feedbackSubmitting = false;
+        submitFeedbackBtn.disabled = false;
+        feedbackBackBtn.disabled = false;
+        submitFeedbackBtn.textContent = "Submit Feedback";
+    }
+});
 
 
 // =====================================
