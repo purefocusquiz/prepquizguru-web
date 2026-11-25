@@ -104,16 +104,37 @@ function showScreen(screen) {
     screen.classList.remove("hidden");
 }
 
+
 // =================================
 // FEEDBACK SYSTEM
 // =================================
 
 let feedbackSubmitting = false;
 
+// Feedback form elements
+const feedbackLabel = document.querySelector(
+    'label[for="feedback-message"]'
+);
+
+const feedbackCharCount = document.querySelector(
+    ".feedback-char-count"
+);
+
+// Show or hide the feedback form
+function setFeedbackFormVisible(visible) {
+    feedbackLabel.style.display = visible ? "block" : "none";
+    feedbackMessage.style.display = visible ? "block" : "none";
+    feedbackCharCount.style.display = visible ? "block" : "none";
+    submitFeedbackBtn.style.display = visible ? "block" : "none";
+}
+
 // Open feedback screen
 openFeedbackBtn.addEventListener("click", () => {
     feedbackStatus.textContent = "";
     feedbackStatus.className = "";
+
+    // Restore the form when opening again
+    setFeedbackFormVisible(true);
 
     showScreen(feedbackScreen);
 });
@@ -133,13 +154,15 @@ submitFeedbackBtn.addEventListener("click", async () => {
     const message = feedbackMessage.value.trim();
 
     if (!message) {
-        feedbackStatus.textContent = "Please enter your feedback before submitting.";
+        feedbackStatus.textContent =
+            "Please enter your feedback before submitting.";
         feedbackStatus.className = "error";
         return;
     }
 
     if (message.length > 2000) {
-        feedbackStatus.textContent = "Feedback cannot exceed 2000 characters.";
+        feedbackStatus.textContent =
+            "Feedback cannot exceed 2000 characters.";
         feedbackStatus.className = "error";
         return;
     }
@@ -193,6 +216,9 @@ submitFeedbackBtn.addEventListener("click", async () => {
 
         feedbackStatus.className = "success";
 
+        // Hide the form after successful submission
+        setFeedbackFormVisible(false);
+
     } catch (error) {
 
         feedbackStatus.textContent = error.name === "AbortError"
@@ -211,6 +237,7 @@ submitFeedbackBtn.addEventListener("click", async () => {
         submitFeedbackBtn.textContent = "Submit Feedback";
     }
 });
+
 
 
 // =====================================
