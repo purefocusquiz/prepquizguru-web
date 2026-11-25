@@ -86,6 +86,15 @@
             </button>
 
         </div>
+
+        <!-- FEEDBACK BUTTON -->
+        <section class="feedback-entry-section">
+            <button id="open-feedback-btn" class="feedback-entry-btn">
+                <span>💬</span>
+                Feedback / Your Suggestion
+                <span>→</span>
+            </button>
+        </section>
         
         <!-- ABOUT PREPQUIZGURU -->
         <section class="about-section">
@@ -149,6 +158,52 @@
             <a href="privacy.html">Privacy Policy</a>
         </section>
 
+
+    </main>
+
+
+    <!-- FEEDBACK SCREEN -->
+
+    <main id="feedback-screen" class="hidden">
+
+        <section class="feedback-header">
+            <p class="category-label">YOUR VOICE MATTERS</p>
+            <h2>Feedback / Your Suggestion</h2>
+
+            <p>
+                Help us improve PrepQuizGuru. Share your suggestions,
+                report an issue, or tell us about your experience.
+            </p>
+        </section>
+
+        <section class="feedback-form-card">
+
+            <label for="feedback-message">
+                Your Feedback
+            </label>
+
+            <textarea
+                id="feedback-message"
+                maxlength="2000"
+                placeholder="Write your feedback or suggestion here..."
+                rows="7"
+            ></textarea>
+
+            <p class="feedback-char-count">
+                Maximum 2000 characters
+            </p>
+
+            <div id="feedback-status"></div>
+
+            <button id="submit-feedback-btn" class="primary-btn">
+                Submit Feedback
+            </button>
+
+            <button id="feedback-back-btn" class="secondary-btn">
+                ← Back to Subjects
+            </button>
+
+        </section>
 
     </main>
 
