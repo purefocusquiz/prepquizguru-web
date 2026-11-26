@@ -47,6 +47,7 @@ trackAnalytics({
 // =====================================
 
 let selectedSubject = "";
+let currentLanguage = "en";
 let sessionId = "";
 
 let questions = [];
@@ -85,6 +86,7 @@ const answeredCount = document.getElementById("answered-count");
 const previousBtn = document.getElementById("previous-btn");
 const nextBtn = document.getElementById("next-btn");
 const finishBtn = document.getElementById("finish-btn");
+const languageToggle = document.getElementById("language-toggle");
 
 
 // =====================================
@@ -104,37 +106,16 @@ function showScreen(screen) {
     screen.classList.remove("hidden");
 }
 
-
 // =================================
 // FEEDBACK SYSTEM
 // =================================
 
 let feedbackSubmitting = false;
 
-// Feedback form elements
-const feedbackLabel = document.querySelector(
-    'label[for="feedback-message"]'
-);
-
-const feedbackCharCount = document.querySelector(
-    ".feedback-char-count"
-);
-
-// Show or hide the feedback form
-function setFeedbackFormVisible(visible) {
-    feedbackLabel.style.display = visible ? "block" : "none";
-    feedbackMessage.style.display = visible ? "block" : "none";
-    feedbackCharCount.style.display = visible ? "block" : "none";
-    submitFeedbackBtn.style.display = visible ? "block" : "none";
-}
-
 // Open feedback screen
 openFeedbackBtn.addEventListener("click", () => {
     feedbackStatus.textContent = "";
     feedbackStatus.className = "";
-
-    // Restore the form when opening again
-    setFeedbackFormVisible(true);
 
     showScreen(feedbackScreen);
 });
@@ -154,15 +135,13 @@ submitFeedbackBtn.addEventListener("click", async () => {
     const message = feedbackMessage.value.trim();
 
     if (!message) {
-        feedbackStatus.textContent =
-            "Please enter your feedback before submitting.";
+        feedbackStatus.textContent = "Please enter your feedback before submitting.";
         feedbackStatus.className = "error";
         return;
     }
 
     if (message.length > 2000) {
-        feedbackStatus.textContent =
-            "Feedback cannot exceed 2000 characters.";
+        feedbackStatus.textContent = "Feedback cannot exceed 2000 characters.";
         feedbackStatus.className = "error";
         return;
     }
@@ -216,9 +195,6 @@ submitFeedbackBtn.addEventListener("click", async () => {
 
         feedbackStatus.className = "success";
 
-        // Hide the form after successful submission
-        setFeedbackFormVisible(false);
-
     } catch (error) {
 
         feedbackStatus.textContent = error.name === "AbortError"
@@ -237,7 +213,6 @@ submitFeedbackBtn.addEventListener("click", async () => {
         submitFeedbackBtn.textContent = "Submit Feedback";
     }
 });
-
 
 
 // =====================================
@@ -324,6 +299,21 @@ async function loadQuestions() {
     // Identify this as the latest request
     const requestId = ++questionRequestId;
     const requestedSubject = selectedSubject;
+    // Every new quiz starts in English.
+    currentLanguage = "en";
+
+    // Show the toggle only for bilingual subjects.
+    const bilingualSubjects = [
+        "Aptitude",
+        "Reasoning",
+        "General Studies"
+    ];
+
+    const isBilingual =
+        bilingualSubjects.includes(requestedSubject);
+
+    languageToggle.hidden = !isBilingual;
+    languageToggle.textContent = "தமிழ்";
 
     // Clear previous subject data
     questions = [];
@@ -456,6 +446,7 @@ async function loadQuestions() {
 // DISPLAY CURRENT QUESTION
 // =====================================
 
+
 function renderQuestion() {
 
     if (!questions.length) return;
@@ -466,7 +457,32 @@ function renderQuestion() {
 
     const total = questions.length;
 
-    questionText.textContent = q.question;
+    // Use Tamil only when the complete question and all four
+    // Tamil options are available. Otherwise, use English.
+    const hasTamilContent =
+        typeof q.question_ta === "string" &&
+        q.question_ta.trim() !== "" &&
+        q.options_ta &&
+        ["A", "B", "C", "D"].every(
+            key =>
+                typeof q.options_ta[key] === "string" &&
+                q.options_ta[key].trim() !== ""
+        ) &&
+        typeof q.explanation_ta === "string" &&
+        q.explanation_ta.trim() !== "";
+
+    const useTamil =
+        currentLanguage === "ta" && hasTamilContent;
+
+    const displayedQuestion = useTamil
+        ? q.question_ta
+        : q.question;
+
+    const displayedOptions = useTamil
+        ? q.options_ta
+        : q.options;
+
+    questionText.textContent = displayedQuestion;
 
     questionCount.textContent =
         `${currentQuestion + 1} / ${total}`;
@@ -481,17 +497,17 @@ function renderQuestion() {
     progressPercent.textContent =
         `${Math.round(progress)}%`;
 
-	const actualAnswered = Object.values(answers).filter(
-	    answer => !answer.unanswered
-	).length;
-	
-	answeredCount.textContent =
-	    `${actualAnswered} answered`;
+    const actualAnswered = Object.values(answers).filter(
+        answer => !answer.unanswered
+    ).length;
+
+    answeredCount.textContent =
+        `${actualAnswered} answered`;
 
     optionsContainer.innerHTML = "";
     feedbackContainer.innerHTML = "";
 
-    Object.entries(q.options).forEach(([key, value]) => {
+    Object.entries(displayedOptions).forEach(([key, value]) => {
 
         const button = document.createElement("button");
 
@@ -513,9 +529,10 @@ function renderQuestion() {
             if (key === savedAnswer.correctOption) {
 
                 button.classList.add("correct");
-			} else if (key === savedAnswer.selected) {
-				button.classList.add("wrong");
-                
+
+            } else if (key === savedAnswer.selected) {
+
+                button.classList.add("wrong");
 
             }
 
@@ -538,7 +555,7 @@ function renderQuestion() {
     });
 
     if (savedAnswer) {
-        showFeedback(savedAnswer, q.options);
+        showFeedback(savedAnswer, displayedOptions);
     }
 
     previousBtn.disabled =
@@ -600,8 +617,9 @@ async function selectAnswer(key) {
         answers[currentQuestion] = {
             selected: key,
             correct: result.correct,
-			correctOption: result.correct_option,
-            explanation: result.explanation
+            correctOption: result.correct_option,
+            explanation: result.explanation,
+            explanation_ta: result.explanation_ta
         };
 
     } catch (error) {
@@ -624,6 +642,8 @@ async function selectAnswer(key) {
 // =====================================
 // ANSWER FEEDBACK
 // =====================================
+
+
 
 function showFeedback(result, options) {
 
@@ -663,12 +683,36 @@ function showFeedback(result, options) {
 
     }
 
+    // Check whether the current question has a complete Tamil translation.
+    const q = questions[currentQuestion];
+
+    const hasCompleteTamil =
+        typeof q.question_ta === "string" &&
+        q.question_ta.trim() !== "" &&
+        q.options_ta &&
+        ["A", "B", "C", "D"].every(
+            key =>
+                typeof q.options_ta[key] === "string" &&
+                q.options_ta[key].trim() !== ""
+        ) &&
+        typeof result.explanation_ta === "string" &&
+        result.explanation_ta.trim() !== "";
+
+    // Use Tamil only when the entire question is translated.
+    const useTamil =
+        currentLanguage === "ta" && hasCompleteTamil;
+
+    const displayedExplanation = useTamil
+        ? result.explanation_ta
+        : result.explanation;
+
     const explanation = document.createElement("div");
 
     explanation.className = "explanation";
 
-    explanation.textContent =
-        `Explanation: ${result.explanation}`;
+    explanation.textContent = useTamil
+        ? `விளக்கம்: ${displayedExplanation}`
+        : `Explanation: ${displayedExplanation}`;
 
     box.appendChild(explanation);
 
@@ -752,6 +796,36 @@ nextBtn.addEventListener("click", () => {
 
 
 // =====================================
+// ENGLISH / TAMIL LANGUAGE TOGGLE
+// =====================================
+
+languageToggle.addEventListener("click", () => {
+
+    const bilingualSubjects = [
+        "Aptitude",
+        "Reasoning",
+        "General Studies"
+    ];
+
+    if (!bilingualSubjects.includes(selectedSubject)) {
+        return;
+    }
+
+    // Switch the current language.
+    currentLanguage =
+        currentLanguage === "en" ? "ta" : "en";
+
+    // Update button label.
+    languageToggle.textContent =
+        currentLanguage === "en" ? "தமிழ்" : "English";
+
+    // Redisplay the same question.
+    renderQuestion();
+
+});
+
+
+// =====================================
 // FINISH QUIZ
 // =====================================
 
@@ -821,6 +895,7 @@ async function showResults() {
 		            correct: item.status === "correct",
 		            correctOption: item.correct_option,
 		            explanation: item.explanation,
+                            explanation_ta: item.explanation_ta,
 		            unanswered: item.status === "unanswered"
 		        };
 		
