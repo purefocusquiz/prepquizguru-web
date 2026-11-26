@@ -460,16 +460,15 @@ function renderQuestion() {
     // Use Tamil only when the complete question and all four
     // Tamil options are available. Otherwise, use English.
     const hasTamilContent =
-        typeof q.question_ta === "string" &&
-        q.question_ta.trim() !== "" &&
-        q.options_ta &&
-        ["A", "B", "C", "D"].every(
-            key =>
-                typeof q.options_ta[key] === "string" &&
-                q.options_ta[key].trim() !== ""
-        ) &&
-        typeof q.explanation_ta === "string" &&
-        q.explanation_ta.trim() !== "";
+	    q.has_tamil_translation === true &&
+	    typeof q.question_ta === "string" &&
+	    q.question_ta.trim() !== "" &&
+	    q.options_ta &&
+	    ["A", "B", "C", "D"].every(
+	        key =>
+	            typeof q.options_ta[key] === "string" &&
+	            q.options_ta[key].trim() !== ""
+	    );
 
     const useTamil =
         currentLanguage === "ta" && hasTamilContent;
@@ -687,16 +686,17 @@ function showFeedback(result, options) {
     const q = questions[currentQuestion];
 
     const hasCompleteTamil =
-        typeof q.question_ta === "string" &&
-        q.question_ta.trim() !== "" &&
-        q.options_ta &&
-        ["A", "B", "C", "D"].every(
-            key =>
-                typeof q.options_ta[key] === "string" &&
-                q.options_ta[key].trim() !== ""
-        ) &&
-        typeof result.explanation_ta === "string" &&
-        result.explanation_ta.trim() !== "";
+	    q.has_tamil_translation === true &&
+	    typeof q.question_ta === "string" &&
+	    q.question_ta.trim() !== "" &&
+	    q.options_ta &&
+	    ["A", "B", "C", "D"].every(
+	        key =>
+	            typeof q.options_ta[key] === "string" &&
+	            q.options_ta[key].trim() !== ""
+	    ) &&
+	    typeof result.explanation_ta === "string" &&
+	    result.explanation_ta.trim() !== "";
 
     // Use Tamil only when the entire question is translated.
     const useTamil =
@@ -895,7 +895,7 @@ async function showResults() {
 		            correct: item.status === "correct",
 		            correctOption: item.correct_option,
 		            explanation: item.explanation,
-                            explanation_ta: item.explanation_ta,
+                    explanation_ta: item.explanation_ta,
 		            unanswered: item.status === "unanswered"
 		        };
 		
