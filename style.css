@@ -1047,3 +1047,31 @@ button {
     }
 }
 
+
+/* English / Tamil language toggle */
+.language-toggle {
+    padding: 9px 16px;
+    border: 1px solid #5578f7;
+    border-radius: 8px;
+    background: #192538;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.language-toggle:hover {
+    background: #263b65;
+}
+
+.language-toggle:active {
+    transform: scale(0.97);
+}
+
+.language-toggle[hidden] {
+    display: none;
+}
+
+
