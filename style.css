@@ -1073,5 +1073,8 @@ button {
 .language-toggle[hidden] {
     display: none;
 }
-
+/* Tamil language font support */
+body {
+    font-family: Arial, "Noto Sans Tamil", "Latha", sans-serif;
+}
 
